@@ -1,0 +1,12 @@
+# Maven directories
+target/
+!.mvn/
+!mvnw
+!mvnw.cmd
+
+# IDE directories and files
+.idea/
+*.iml
+*.iws
+*.swp
+*.s
