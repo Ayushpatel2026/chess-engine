@@ -3,6 +3,8 @@ package com.chess.engine.board;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.chess.engine.pieces.King;
+
 public class BoardUtils {
     
     public static final boolean[] FIRST_COLUMN = initColumn(0);
@@ -71,5 +73,9 @@ public class BoardUtils {
 
     public static int getCoordinateAtPosition(String position) {
         return POSITION_TO_COORDINATE.get(position);
-    }   
+    }
+
+    public static boolean isKingPawnTrap(Board board, King playerKing, int i) {
+        return false;
+    }
 }

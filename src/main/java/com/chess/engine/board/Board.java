@@ -83,7 +83,7 @@ public class Board {
         builder.setPiece(new Knight(1, Alliance.BLACK));
         builder.setPiece(new Bishop(2, Alliance.BLACK));
         builder.setPiece(new Queen(3, Alliance.BLACK));
-        builder.setPiece(new King(4, Alliance.BLACK));
+        builder.setPiece(new King(4, Alliance.BLACK, true, true));
         builder.setPiece(new Bishop(5, Alliance.BLACK));
         builder.setPiece(new Knight(6, Alliance.BLACK));
         builder.setPiece(new Rook(7, Alliance.BLACK));
@@ -101,7 +101,7 @@ public class Board {
         builder.setPiece(new Knight(62, Alliance.WHITE));
         builder.setPiece(new Bishop(61, Alliance.WHITE));
         builder.setPiece(new Queen(59, Alliance.WHITE));
-        builder.setPiece(new King(60, Alliance.WHITE));
+        builder.setPiece(new King(60, Alliance.WHITE, true, true));
         builder.setPiece(new Bishop(58, Alliance.WHITE));
         builder.setPiece(new Knight(57, Alliance.WHITE));
         builder.setPiece(new Rook(56, Alliance.WHITE));
@@ -204,5 +204,9 @@ public class Board {
         allPieces.addAll(this.whitePieces);
         allPieces.addAll(this.blackPieces);
         return Collections.unmodifiableList(allPieces);
+    }
+
+    public Piece getPiece(int i) {
+        return this.gameBoard.get(i).getPiece();
     }
 }
