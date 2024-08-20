@@ -458,6 +458,11 @@ public class Table extends Observable{
             Collection<Move> actualLegalMoves = new ArrayList<>();
         
             for (Move move: allLegalMoves){
+                //TODO: executing pawn promotion move requires user input and needs to be handled differently
+                if (move instanceof Move.PawnPromotion){
+                    actualLegalMoves.add(move);
+                    continue;
+                }
                 Board transitionBoard = move.execute();
 
                 

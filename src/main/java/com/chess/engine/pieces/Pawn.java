@@ -12,6 +12,7 @@ import com.chess.engine.board.Move.PawnEnPassantAttackMove;
 import com.chess.engine.board.Move.PawnJump;
 import com.chess.engine.board.Move.PawnMove;
 import com.chess.engine.board.Move.PawnPromotion;
+import java.util.Scanner;
 
 public class Pawn extends Piece{
     private final static int[] CANDIDATE_MOVE_COORDINATES = {7, 8, 9, 16};
@@ -31,7 +32,7 @@ public class Pawn extends Piece{
 
     @Override
     public Piece movePiece(Move move) {
-        return new Pawn(move.getDestinationCoordinate(), move.getMovedPiece().getPieceAlliance());
+        return new Pawn(move.getDestinationCoordinate(), move.getMovedPiece().getPieceAlliance(), false);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class Pawn extends Piece{
             if (!BoardUtils.isValidCoordinate(candidateDestinationCoordinate)){
                 continue;
             }
-
+            // move 1 square forward
             if (currentCandidateOffset == 8 && !board.getTile(candidateDestinationCoordinate).isTileOccupied()){
                 
                 if (this.pieceAlliance.isPawnPromotionSquare(candidateDestinationCoordinate)){
@@ -53,10 +54,10 @@ public class Pawn extends Piece{
                     legalMoves.add(new PawnMove(board, this, candidateDestinationCoordinate));
                 }
 
-            } else if (currentCandidateOffset == 16 && 
-                        this.isFirstMove() && 
-                        ((BoardUtils.SEVENTH_RANK[this.piecePosition] && this.getPieceAlliance().isBlack()) || 
-                        (BoardUtils.SECOND_RANK[this.piecePosition] && this.getPieceAlliance().isWhite()))
+            } 
+            // move 2 squares forward
+            else if (currentCandidateOffset == 16 && 
+                        this.isFirstMove() 
             ){
                 
                 int behindCandidateDestinationCoordinate = this.piecePosition + this.pieceAlliance.getDirection() * 8;
@@ -86,7 +87,7 @@ public class Pawn extends Piece{
 
                 }else if (board.getEnPassantPawn() != null){
                     
-                    // if position of enpassant pawn is next to our pawn, +1 for white, -1 for black
+                    // if position of enpassant pawn is next to our pawn, +1 for white, -1 for black (for offset of 7)
                     if (board.getEnPassantPawn().getPiecePosition() == (this.piecePosition + this.pieceAlliance.getOppositeDirection())){
                         final Piece pieceOnCandidate = board.getEnPassantPawn();
                         if (this.pieceAlliance != pieceOnCandidate.getPieceAlliance()){
@@ -115,7 +116,7 @@ public class Pawn extends Piece{
 
                 }else if (board.getEnPassantPawn() != null){
                     
-                    // if position of enpassant pawn is next to our pawn, -1 for white, +1 for black
+                    // if position of enpassant pawn is next to our pawn, -1 for white, +1 for black (for offset of 9)
                     if (board.getEnPassantPawn().getPiecePosition() == (this.piecePosition - this.pieceAlliance.getOppositeDirection())){
                         final Piece pieceOnCandidate = board.getEnPassantPawn();
                         if (this.pieceAlliance != pieceOnCandidate.getPieceAlliance()){
@@ -129,6 +130,23 @@ public class Pawn extends Piece{
     }
 
     public Piece getPromotionPiece(){
-        return new Queen(this.piecePosition, this.pieceAlliance, false);
-    }
+        // want to be able to underpromote to a knight, bishop, or rook
+        // prompt the user to choose the promotion piece
+        // and return the corresponding piece based on their choice
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Choose promotion piece: (N)Knight, (B)Bishop, (R)Rook");
+        String choice = scanner.nextLine();
+        scanner.close();
+        switch (choice.toUpperCase()) {
+            case "N":
+                return new Knight(this.piecePosition, this.pieceAlliance, false);
+            case "B":
+                return new Bishop(this.piecePosition, this.pieceAlliance, false);
+            case "R":
+                return new Rook(this.piecePosition, this.pieceAlliance, false);
+            default:
+                return new Queen(this.piecePosition, this.pieceAlliance, false);
+        }
+
+    } 
 }

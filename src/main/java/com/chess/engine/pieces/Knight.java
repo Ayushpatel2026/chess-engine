@@ -66,18 +66,22 @@ public class Knight extends Piece {
     }
 
     private static boolean isFirstColumnExclusion(int currentPosition, int candidateOffset){
+        // cannot move towards the left if in the first column
         return BoardUtils.FIRST_COLUMN[currentPosition] && (candidateOffset == -17 || candidateOffset == -10 || candidateOffset == 6 || candidateOffset == 15);
     }
 
     private static boolean isSecondColumnExclusion(int currentPosition, int candidateOffset){
+        // cannot move towards the left (two squares) if in the second column
         return BoardUtils.SECOND_COLUMN[currentPosition] && (candidateOffset == -10 || candidateOffset == 6);
     }
 
     private static boolean isSeventhColumnExclusion(int currentPosition, int candidateOffset){
+        // cannot move towards the right (two squares) if in the seventh column
         return BoardUtils.SEVENTH_COLUMN[currentPosition] && (candidateOffset == -6 || candidateOffset == 10);
     }
 
     private static boolean isEigthColumnExclusion(int currentPosition, int candidateOffset){
+        // cannot move towards the right if in the eigth column
         return BoardUtils.EIGTH_COLUMN[currentPosition] && (candidateOffset == -15 || candidateOffset == -6 || candidateOffset == 10 || candidateOffset == 17);
     }
 }

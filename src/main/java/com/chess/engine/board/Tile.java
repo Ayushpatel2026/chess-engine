@@ -7,6 +7,8 @@ import java.util.Map;
 import com.chess.engine.pieces.Piece;
 
 public abstract class Tile{
+
+    // all tiles have a tile coordinate and occupied tiles also contain a piece
     protected final int tileCoordinate;
 
     private static final Map<Integer, EmptyTile> EMPTY_TILES_CACHE = createAllEmptyTiles();
@@ -15,6 +17,7 @@ public abstract class Tile{
         this.tileCoordinate = tileCoordinate;
     }
     
+    // factory method to create a tile from outside this class
     public static Tile createTile(final int tileCoordinate, final Piece piece){
         return piece != null ? new OccupiedTile(tileCoordinate, piece) : EMPTY_TILES_CACHE.get(tileCoordinate);
     }

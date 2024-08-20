@@ -5,6 +5,8 @@ import java.util.Map;
 
 import com.chess.engine.pieces.King;
 
+// this class contains useful methods for the board
+
 public class BoardUtils {
     
     public static final boolean[] FIRST_COLUMN = initColumn(0);

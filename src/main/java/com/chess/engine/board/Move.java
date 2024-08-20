@@ -5,6 +5,9 @@ import com.chess.engine.pieces.Pawn;
 import com.chess.engine.pieces.Piece;
 import com.chess.engine.pieces.Rook;
 
+/*
+ * The move class needs a board, the piece and the destination coordinate
+ */
 public abstract class Move {
     final Board board;
     final Piece movedPiece;
@@ -88,12 +91,15 @@ public abstract class Move {
             builder.setPiece(piece);
         }
 
-
+        // movePiece returns a new piece with an updated piece position
         builder.setPiece(movedPiece.movePiece(this));
         builder.setMoveMaker(this.board.currentPlayer().getOpponent().getAlliance());
+        
+        // return a new board with the updated pieces
         return builder.build();
     }
-
+    
+    /*MajorMove is the movement of a major piece - non-attacking */
     public static final class MajorMove extends Move{
         public MajorMove(Board board, Piece movedPiece, int destinationCoordinate){
             super(board, movedPiece, destinationCoordinate);
@@ -221,6 +227,7 @@ public abstract class Move {
     
             // set opponent's pieces
             for (Piece piece : this.board.currentPlayer().getOpponent().getActivePieces()){
+                // this if statement is the difference from the super execute method
                 if (!piece.equals(this.getAttackedPiece())){
                     builder.setPiece(piece);
                 }
@@ -231,6 +238,11 @@ public abstract class Move {
             return builder.build();
         }
     }
+
+    /* The pawn promotion class uses the decorator pattern
+     * This is because the pawn promotion move can decorate a normal Pawn Move or a Pawn Attack Move
+     * It delegates most of the work to the decorated move
+     */
 
     public static class PawnPromotion extends Move{
 
@@ -274,21 +286,23 @@ public abstract class Move {
             final Builder builder = new Builder();
     
             for (Piece piece: pawnMovedBoard.currentPlayer().getActivePieces()){
-                if (!this.promotedPawn.equals(piece)){
-                    builder.setPiece(piece);
-                }
-            }
-    
-            for (Piece piece: pawnMovedBoard.currentPlayer().getOpponent().getActivePieces()){
                 builder.setPiece(piece);
             }
     
+            for (Piece piece: pawnMovedBoard.currentPlayer().getOpponent().getActivePieces()){
+                if (!piece.equals(promotedPawn)){
+                    builder.setPiece(piece);
+                }
+            }
+            // need to get the promoted piece from the user and move it to the destination coordinate
             builder.setPiece(this.promotedPawn.getPromotionPiece().movePiece(this));
+            // do not set the move maker to the opponent, because when the decorated move executed, the move maker was already set to the opponent
             builder.setMoveMaker(pawnMovedBoard.currentPlayer().getAlliance());
             return builder.build();
         }
     }
 
+    // the pawn jump class is a special move because it has the ability to set an enpassant pawn
     public static final class PawnJump extends Move{
 
         public PawnJump(Board board, Piece movedPiece, int destinationCoordinate){
@@ -326,6 +340,7 @@ public abstract class Move {
         }
     }
 
+    // in castle moves, the moved piece is the king
     static abstract class CastleMove extends Move{
         protected Rook castleRook;
         protected int castleRookStart;
@@ -355,7 +370,7 @@ public abstract class Move {
         public Board execute() {
             final Builder builder = new Builder();
     
-            // set all of current player's pieces except for the moved piece 
+            // set all of current player's pieces except for the moved piece and the castle rook
             for (Piece piece: this.board.currentPlayer().getActivePieces()){
                 if (!this.movedPiece.equals(piece) && !this.castleRook.equals(piece)){
                     builder.setPiece(piece);
@@ -460,7 +475,7 @@ public abstract class Move {
         private MoveFactory(){
             throw new RuntimeException("Non instantiable");
         }
-
+        // return a move from the boards legal moves given the current and destination coordinates
         public static Move createMove(Board board, int currentCoordinate, int destinationCoordinate){
             for (Move move: board.getAllLegalMoves()){
                 if (move.getCurrentCoordinate() == currentCoordinate && move.getDestinationCoordinate() == destinationCoordinate){

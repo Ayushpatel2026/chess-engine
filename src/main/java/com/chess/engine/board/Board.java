@@ -13,6 +13,13 @@ import com.chess.engine.player.BlackPlayer;
 import com.chess.engine.player.Player;
 import com.chess.engine.player.WhitePlayer;
 
+/*
+ * The board is a list of tiles
+ * A board contains two players, also needs to store the current player
+ * Board stores the whitePieces and blackPieces
+ * The board also stores if there is an enpassantpawn on the board
+ */
+
 public class Board {
 
     private final List<Tile> gameBoard;
@@ -24,7 +31,7 @@ public class Board {
     private final Player currentPlayer;
     private final Pawn enPassantPawn;
 
-
+    // The builder calls this constructor and initializes the board
     private Board(Builder builder){
         this.gameBoard = createGameBoard(builder);
         this.whitePieces = calculateActivePieces(this.gameBoard, Alliance.WHITE);
@@ -58,6 +65,7 @@ public class Board {
         List<Tile> tiles = new ArrayList<>();
 
         for (int i = 0; i < BoardUtils.NUM_TILES; i++){
+            // if piece is null, createTile makes an empty tile
             tiles.add(Tile.createTile(i, builder.boardConfig.getOrDefault(i, null)));
         }
 
@@ -160,6 +168,7 @@ public class Board {
     // using the Builder design pattern
 
     public static class Builder {
+        // store the board as a hashmap with the position of the piece as the key
         Map<Integer, Piece> boardConfig;
         Pawn enPassantPawn;
 

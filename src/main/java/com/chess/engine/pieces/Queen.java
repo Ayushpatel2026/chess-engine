@@ -18,6 +18,7 @@ public class Queen extends Piece {
         super(piecePosition, pieceAlliance, PieceType.QUEEN, true);
     }
 
+    // alternate constructor used when making a promoted queen
     public Queen(final int piecePosition, final Alliance pieceAlliance, final boolean isFirstMove){
         super(piecePosition, pieceAlliance, PieceType.QUEEN, isFirstMove);
     }
@@ -70,10 +71,12 @@ public class Queen extends Piece {
     }
 
     private static boolean isFirstColumnExclusion(int currentPosition, int candidateOffset){
+        // cannot move left, top left, or bottom left if on the first column
         return BoardUtils.FIRST_COLUMN[currentPosition] && (candidateOffset == -1 || candidateOffset == -9 || candidateOffset == 7);
     }
 
     private static boolean isEigthColumnExclusion(int currentPosition, int candidateOffset){
+        // cannot move right, top right, or bottom right if on the eigth column
         return BoardUtils.EIGTH_COLUMN[currentPosition] && (candidateOffset == 1 || candidateOffset == -7 || candidateOffset == 9);
     }
 }

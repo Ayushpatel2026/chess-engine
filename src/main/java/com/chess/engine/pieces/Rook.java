@@ -70,10 +70,12 @@ public class Rook extends Piece {
     }
 
     private static boolean isFirstColumnExclusion(int currentPosition, int candidateOffset){
+        // cannot move left if on the first column
         return BoardUtils.FIRST_COLUMN[currentPosition] && (candidateOffset == -1);
     }
 
     private static boolean isEigthColumnExclusion(int currentPosition, int candidateOffset){
+        // cannot move right if on the eigth column
         return BoardUtils.EIGTH_COLUMN[currentPosition] && (candidateOffset == 1);
     }
 }
