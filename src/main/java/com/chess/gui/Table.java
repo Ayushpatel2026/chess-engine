@@ -10,6 +10,7 @@ import com.chess.engine.board.Move.MoveFactory;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.Piece;
 import com.chess.engine.player.MoveTransition;
+import com.chess.engine.player.Player;
 import com.chess.engine.player.ai.MiniMax;
 import com.chess.engine.player.ai.MoveStrategy;
 
@@ -441,8 +442,9 @@ public class Table extends Observable{
         private Collection<Move> pieceLegalMoves(Board board){
             if (humanMovedPiece != null && humanMovedPiece.getPieceAlliance() == board.currentPlayer().getAlliance()){
                 Collection<Move> legalMoves = board.currentPlayer().getLegalMoves();
+                Collection<Move> actualLegalMoves = calculateLegalMoves(legalMoves, board.currentPlayer().getOpponent().getLegalMoves());
                 Collection<Move> pieceLegalMoves = new ArrayList<>();
-                for (Move move : legalMoves){
+                for (Move move : actualLegalMoves){
                     if (move.getMovedPiece().equals(humanMovedPiece)){
                         pieceLegalMoves.add(move);
                     }
@@ -450,6 +452,24 @@ public class Table extends Observable{
                 return pieceLegalMoves;
             }
             return Collections.emptyList();
+        }
+
+        public Collection<Move> calculateLegalMoves(Collection<Move> allLegalMoves, Collection<Move> opponentMoves) {
+            Collection<Move> actualLegalMoves = new ArrayList<>();
+        
+            for (Move move: allLegalMoves){
+                Board transitionBoard = move.execute();
+
+                
+                Collection<Move> kingAttacks = Player.calculateAttacksOnTile(transitionBoard.currentPlayer().getOpponent().getPlayerKing().getPiecePosition(),
+                transitionBoard.currentPlayer().getLegalMoves());
+
+                if (kingAttacks.isEmpty()){
+                    actualLegalMoves.add(move);
+                } 
+            }
+
+            return actualLegalMoves;
         }
 
         public void drawTile(Board board) {
