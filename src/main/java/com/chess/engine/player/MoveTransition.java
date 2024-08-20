@@ -3,6 +3,12 @@ package com.chess.engine.player;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.Move;
 
+/* The purpose of this class is to create a transition state with the board, move, and move status
+ * This will allow us to make a move
+ * We can then check the move status
+ * We can also check the transition board to see if the move was successful
+*/
+
 public class MoveTransition {
     private final Board fromBoard;
     private final Board transitionBoard;

@@ -11,6 +11,8 @@ import com.chess.engine.pieces.King;
 import com.chess.engine.pieces.Piece;
 
 public abstract class Player {
+
+    // a player needs a board, a king, set of legal moves and needs to know if he is in check
     protected final Board board; 
     protected final King playerKing;
     protected final Collection<Move> legalMoves;
@@ -45,6 +47,8 @@ public abstract class Player {
         }
         throw new RuntimeException("Not a valid board");
     }
+
+    // important methods for the player class
 
     public King getPlayerKing(){
         return this.playerKing;
@@ -87,6 +91,10 @@ public abstract class Player {
 
     public MoveTransition makeMove(Move move){
 
+        /* when making a move, check if it is legal, and make sure it doesn't leave the player in check after the move 
+            If the move is legal, return the new board, with status DONE
+        */
+
         if (!isMoveLegal(move)){
             return new MoveTransition(this.board, this.board, move, MoveStatus.ILLEGAL_MOVE);
         }
@@ -104,15 +112,24 @@ public abstract class Player {
     }
 
     public boolean isKingSideCastleCapable(){
+        // delegate to the king
         return this.playerKing.isKingSideCastleCapable();
     }
 
     public boolean isQueenSideCastleCapable(){
+        // delegate to the king
         return this.playerKing.isQueenSideCastleCapable();
     }
 
+    // a white player and black player will have different active pieces
     public abstract Collection<Piece> getActivePieces();
+
+    // a white player and black player will have different alliances
     public abstract Alliance getAlliance();
+
+    // a white player and black player will have different opponents
     public abstract Player getOpponent();
+
+    // a white player and black player will have different king castles
     protected abstract Collection<Move> calculateKingCastles(Collection<Move> playerLegals, Collection<Move> opponentLegals);
 }

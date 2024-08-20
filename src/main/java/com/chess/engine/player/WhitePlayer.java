@@ -37,6 +37,15 @@ public class WhitePlayer extends Player {
         return this.board.blackPlayer();
     }
 
+    /*When calculating the castle moves, need to ensure that:
+     *  1. The king is in its starting position
+     *  2. The king is not in check
+     *  3. The squares between the king and the rook are empty
+     *  4. The squares that the king moves through are not under attack
+     *  5. The king is not moving into check
+     *  6. The rook is in its starting position 
+     */
+
     @Override
     protected Collection<Move> calculateKingCastles(Collection<Move> playerLegals, Collection<Move> opponentLegals) {
         final List<Move> kingCastles = new ArrayList<>();

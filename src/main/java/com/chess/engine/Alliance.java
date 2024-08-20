@@ -67,6 +67,9 @@ public enum Alliance {
             return BoardUtils.FIRST_RANK[position];
         }
     };
+
+    /*Each alliance has a different direction and promotion rank */
+    
     public abstract int getDirection();
 
     public abstract boolean isWhite();
