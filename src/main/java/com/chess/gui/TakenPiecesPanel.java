@@ -81,10 +81,10 @@ public class TakenPiecesPanel extends JPanel {
 
         for (final Piece takenPiece : whiteTakenPieces){
             try {
-                final BufferedImage image = ImageIO.read(new File("art/pieces/fancy/" + takenPiece.getPieceAlliance().toString().substring(0, 1) + "" + takenPiece.toString() + ".gif"));
+                final BufferedImage image = ImageIO.read(new File("art/pieces/simple/" + takenPiece.getPieceAlliance().toString().substring(0, 1) + "" + takenPiece.toString() + ".png"));
                 final ImageIcon icon = new ImageIcon(image);
                 final JLabel imageLabel = new JLabel(new ImageIcon(icon.getImage().getScaledInstance(icon.getIconWidth() - 15, icon.getIconHeight() - 15, Image.SCALE_SMOOTH)));
-                this.southPanel.add(imageLabel);
+                this.northPanel.add(imageLabel);
             } catch (IOException e){
                 e.printStackTrace();
             }
@@ -92,10 +92,10 @@ public class TakenPiecesPanel extends JPanel {
 
         for (final Piece takenPiece : blackTakenPieces){
             try {
-                final BufferedImage image = ImageIO.read(new File("art/pieces/fancy/" + takenPiece.getPieceAlliance().toString().substring(0, 1) + "" + takenPiece.toString() + ".gif"));
+                final BufferedImage image = ImageIO.read(new File("art/pieces/simple/" + takenPiece.getPieceAlliance().toString().substring(0, 1) + "" + takenPiece.toString() + ".png"));
                 final ImageIcon icon = new ImageIcon(image);
                 final JLabel imageLabel = new JLabel(new ImageIcon(icon.getImage().getScaledInstance(icon.getIconWidth() - 15, icon.getIconHeight() - 15, Image.SCALE_SMOOTH)));
-                this.northPanel.add(imageLabel);
+                this.southPanel.add(imageLabel);
             } catch (IOException e){
                 e.printStackTrace();
             }

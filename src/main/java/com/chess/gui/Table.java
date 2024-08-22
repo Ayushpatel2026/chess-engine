@@ -137,7 +137,7 @@ public class Table extends Observable{
         flipBoardMenuItem.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                boardDirection = boardDirection.opposite();
+                Collections.reverse(boardPanel.boardTiles);
                 boardPanel.drawBoard(chessBoard);
             }
         });
@@ -298,7 +298,7 @@ public class Table extends Observable{
 
         public void drawBoard(Board board){
             removeAll();
-            for (final TilePanel tilePanel : boardDirection.traverse(boardTiles)){
+            for (final TilePanel tilePanel : boardTiles){
                 tilePanel.drawTile(board);
                 add(tilePanel);
             }
@@ -508,7 +508,7 @@ public class Table extends Observable{
             if (board.getTile(tileId).isTileOccupied()){
                 String pieceIconPath = defaultPieceImagesPath;
                 try {
-                    BufferedImage image = ImageIO.read(new File(pieceIconPath+board.getTile(tileId).getPiece().getPieceAlliance().toString().substring(0, 1) + board.getTile(tileId).getPiece().toString() + ".gif"));
+                    BufferedImage image = ImageIO.read(new File(pieceIconPath+board.getTile(tileId).getPiece().getPieceAlliance().toString().substring(0, 1) + board.getTile(tileId).getPiece().toString() + ".png"));
                     add(new JLabel(new ImageIcon(image)));
                 } catch (IOException e) {
                     e.printStackTrace();

@@ -49,5 +49,10 @@ public class StandardBoardEvaluator implements BoardEvaluator {
     private static int depthBonus(int depth) {
         return depth == 0 ? 1 : DEPTH_BONUS_VALUE * depth;
     }
+
+    public static Object get() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'get'");
+    }
     
 }

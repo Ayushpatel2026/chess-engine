@@ -485,6 +485,10 @@ public abstract class Move {
 
             return NULL_MOVE;
         }
+        public static Move getNullMove() {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'getNullMove'");
+        }
     }
     public int getDestinationCoordinate() {
        return this.destinationCoordinate;
