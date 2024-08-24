@@ -34,13 +34,13 @@ import static javax.swing.SwingUtilities.*;
 
 public class Table extends Observable{
     private final JFrame gameFrame;
-    private final BoardPanel boardPanel;
+    public final BoardPanel boardPanel;
     private final GameHistoryPanel gameHistoryPanel;
     private final TakenPiecesPanel takenPiecesPanel;
     private final MoveLog moveLog;
     private final GameSetup gameSetup;
 
-    private Board chessBoard;
+    public Board chessBoard;
     private Tile sourceTile;
     private Tile destinationTile;
     private Piece humanMovedPiece;
@@ -68,6 +68,11 @@ public class Table extends Observable{
        Table.get().gameHistoryPanel.redo(chessBoard, Table.get().moveLog);
        Table.get().takenPiecesPanel.redo(Table.get().moveLog);
        Table.get().boardPanel.drawBoard(chessBoard);
+    }
+
+    public void flipBoard(){
+        Collections.reverse(boardPanel.boardTiles);
+        boardPanel.drawBoard(chessBoard);
     }
 
    
@@ -156,9 +161,9 @@ public class Table extends Observable{
     }
 
     private JMenu createOptionsMenu(){
-        final JMenu optionsMenu = new JMenu("Options");
+        final JMenu optionsMenu = new JMenu("Play");
 
-        final JMenuItem setupGameMenuItem = new JMenuItem("Setup Game");
+        final JMenuItem setupGameMenuItem = new JMenuItem("Setup New Game");
         setupGameMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
@@ -183,15 +188,53 @@ public class Table extends Observable{
             if (Table.get().getGameSetup().isAIPlayer(Table.get().getGameBoard().currentPlayer()) &&
             !Table.get().getGameBoard().currentPlayer().isInCheckMate() &&
             !Table.get().getGameBoard().currentPlayer().isInStaleMate()){
-                final AIThinkTank thinkTank = new AIThinkTank();
+                final AIThinkTank thinkTank = new AIThinkTank(Table.get().getGameSetup().getSearchDepth());
                 thinkTank.execute();
             }
-            if (Table.get().getGameBoard().currentPlayer().isInCheckMate()){
-                JOptionPane.showMessageDialog(Table.get().getGameFrame(), "Game Over, " + Table.get().getGameBoard().currentPlayer() + " is in checkmate!");
-            }
 
-            if (Table.get().getGameBoard().currentPlayer().isInStaleMate()){
-                JOptionPane.showMessageDialog(Table.get().getGameFrame(), "Game Over, " + Table.get().getGameBoard().currentPlayer() + " is in stalemate!");
+            if (Table.get().getGameBoard().currentPlayer().isInCheckMate()) {
+                String message;
+                if (Table.get().getGameBoard().currentPlayer().getAlliance().isBlack()) {
+                    message = "Game Over, Black is in checkmate! White WINS!";
+                } else {
+                    message = "Game Over, White is in checkmate! Black WINS!";
+                }
+            
+                int response = JOptionPane.showOptionDialog(
+                        Table.get().getGameFrame(),
+                        message + "\nWould you like to play again?",
+                        "Checkmate",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null,
+                        new String[]{"Play Again", "Exit"},
+                        "Play Again");
+            
+                if (response == JOptionPane.YES_OPTION) {
+                    Table.get().getGameSetup().promptUser();
+                    Table.get().setupUpdate(Table.get().getGameSetup());
+                } else {
+                    System.exit(0);
+                }
+            }
+            
+            if (Table.get().getGameBoard().currentPlayer().isInStaleMate()) {
+                int response = JOptionPane.showOptionDialog(
+                        Table.get().getGameFrame(),
+                        "Game Over, Stalemate!\nWould you like to play again?",
+                        "Stalemate",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.INFORMATION_MESSAGE,
+                        null,
+                        new String[]{"Play Again", "Exit"},
+                        "Play Again");
+            
+                if (response == JOptionPane.YES_OPTION) {
+                    Table.get().getGameSetup().promptUser();
+                    Table.get().setupUpdate(Table.get().getGameSetup());
+                } else {
+                    System.exit(0);
+                }
             }
         }
     }
@@ -218,16 +261,37 @@ public class Table extends Observable{
     }
 
     private static class AIThinkTank extends SwingWorker<Move, String>{
-        private AIThinkTank(){
-            
+        private int searchDepth;
+
+        private AIThinkTank(int searchDepth){
+            this.searchDepth = searchDepth;
         }
 
         @Override
-        protected Move doInBackground() throws Exception{
-            // run the minimax algorithm
-            final MoveStrategy miniMax = new MiniMax(4);
+        protected Move doInBackground() throws Exception {
+            // Start time
+            long startTime = System.currentTimeMillis();
 
+            // Run the minimax algorithm
+            final MoveStrategy miniMax = new MiniMax(searchDepth);
             final Move bestMove = miniMax.execute(Table.get().getGameBoard());
+
+            // End time
+            long endTime = System.currentTimeMillis();
+
+            // Calculate the elapsed time
+            long elapsedTime = endTime - startTime;
+
+            // Ensure the method takes at least 1 second (1000 milliseconds)
+            if (elapsedTime < 1000) {
+                try {
+                    Thread.sleep(1000 - elapsedTime);
+                } catch (InterruptedException e) {
+                    // Handle the interruption
+                    Thread.currentThread().interrupt();
+                }
+            }
+
             return bestMove;
         }
 
@@ -279,7 +343,7 @@ public class Table extends Observable{
         abstract BoardDirection opposite();
     }
 
-    private class BoardPanel extends JPanel{
+    class BoardPanel extends JPanel{
         final List<TilePanel> boardTiles;
 
         BoardPanel(){
@@ -392,11 +456,8 @@ public class Table extends Observable{
                             public void run(){
                                 gameHistoryPanel.redo(chessBoard, moveLog);
                                 takenPiecesPanel.redo(moveLog);
-                                if (gameSetup.isAIPlayer(chessBoard.currentPlayer())){
-                                    Table.get().moveMadeUpdate(PlayerType.HUMAN);
-                                }
                                 boardPanel.drawBoard(chessBoard);
-                                
+                                Table.get().moveMadeUpdate(PlayerType.HUMAN);
                             }
                         });
                     }

@@ -1,6 +1,7 @@
 package com.chess.gui;
 
 import com.chess.engine.Alliance;
+import com.chess.engine.board.Board;
 import com.chess.engine.player.Player;
 import com.chess.gui.Table.PlayerType;
 
@@ -56,6 +57,13 @@ class GameSetup extends JDialog {
                 whitePlayerType = whiteComputerButton.isSelected() ? PlayerType.COMPUTER : PlayerType.HUMAN;
                 blackPlayerType = blackComputerButton.isSelected() ? PlayerType.COMPUTER : PlayerType.HUMAN;
                 GameSetup.this.setVisible(false);
+                // set board to standard board
+                Table.get().chessBoard = Board.createStandardBoard();
+                if (blackPlayerType == PlayerType.HUMAN && whitePlayerType == PlayerType.COMPUTER) {
+                    // flip the board
+                    Table.get().flipBoard();
+                }
+                Table.get().show();
             }
         });
 
