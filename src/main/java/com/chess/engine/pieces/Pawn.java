@@ -12,7 +12,6 @@ import com.chess.engine.board.Move.PawnEnPassantAttackMove;
 import com.chess.engine.board.Move.PawnJump;
 import com.chess.engine.board.Move.PawnMove;
 import com.chess.engine.board.Move.PawnPromotion;
-import java.util.Scanner;
 
 public class Pawn extends Piece{
     private final static int[] CANDIDATE_MOVE_COORDINATES = {7, 8, 9, 16};
@@ -49,7 +48,7 @@ public class Pawn extends Piece{
             if (currentCandidateOffset == 8 && !board.getTile(candidateDestinationCoordinate).isTileOccupied()){
                 
                 if (this.pieceAlliance.isPawnPromotionSquare(candidateDestinationCoordinate)){
-                    legalMoves.add(new PawnPromotion(new PawnMove(board, this, candidateDestinationCoordinate)));
+                    legalMoves.add(new PawnPromotion(new PawnMove(board, this, candidateDestinationCoordinate), new Queen(candidateDestinationCoordinate, this.pieceAlliance, false)));
                 }else{
                     legalMoves.add(new PawnMove(board, this, candidateDestinationCoordinate));
                 }
@@ -79,7 +78,7 @@ public class Pawn extends Piece{
                     if (this.pieceAlliance != pieceOnCandidate.getPieceAlliance()){
                         
                         if (this.pieceAlliance.isPawnPromotionSquare(candidateDestinationCoordinate)){
-                            legalMoves.add(new PawnPromotion(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate)));
+                            legalMoves.add(new PawnPromotion(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate), new Queen(candidateDestinationCoordinate, this.pieceAlliance, false)));
                         }else{
                             legalMoves.add(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate));
                         }
@@ -107,7 +106,13 @@ public class Pawn extends Piece{
                     if (this.pieceAlliance != pieceOnCandidate.getPieceAlliance()){
                         
                         if (this.pieceAlliance.isPawnPromotionSquare(candidateDestinationCoordinate)){
-                            legalMoves.add(new PawnPromotion(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate)));
+                            /* TODO this is some technical debt, we need to fix this 
+                             * we can create a new PawnPromotion object, but we are never using it anyways
+                             * The pawnPromotion move is created again in the table class (gui) when the user selects the promotion piece
+                             * when we calculate the legal moves for highlighting purposes in Table.java, it is more convenient to have this not be a pawnpromotion move
+                             * and so we just create a pawnAttackMove or a pawnMove, and then create a new PawnPromotion object in the Table.java class
+                            */
+                            legalMoves.add(new PawnPromotion(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate), new Queen(candidateDestinationCoordinate, this.pieceAlliance, false)));
                         }else{
                             legalMoves.add(new PawnAttackMove(board, this, candidateDestinationCoordinate, pieceOnCandidate));
                         }
@@ -128,25 +133,4 @@ public class Pawn extends Piece{
         }
         return legalMoves;
     }
-
-    public Piece getPromotionPiece(){
-        // want to be able to underpromote to a knight, bishop, or rook
-        // prompt the user to choose the promotion piece
-        // and return the corresponding piece based on their choice
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Choose promotion piece: (N)Knight, (B)Bishop, (R)Rook");
-        String choice = scanner.nextLine();
-        scanner.close();
-        switch (choice.toUpperCase()) {
-            case "N":
-                return new Knight(this.piecePosition, this.pieceAlliance, false);
-            case "B":
-                return new Bishop(this.piecePosition, this.pieceAlliance, false);
-            case "R":
-                return new Rook(this.piecePosition, this.pieceAlliance, false);
-            default:
-                return new Queen(this.piecePosition, this.pieceAlliance, false);
-        }
-
-    } 
 }

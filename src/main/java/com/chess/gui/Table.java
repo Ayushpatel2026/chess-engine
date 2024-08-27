@@ -7,8 +7,15 @@ import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
 import com.chess.engine.board.Move.MoveFactory;
+import com.chess.engine.board.Move.PawnMove;
+import com.chess.engine.board.Move.PawnPromotion;
 import com.chess.engine.board.Tile;
+import com.chess.engine.pieces.Bishop;
+import com.chess.engine.pieces.Knight;
+import com.chess.engine.pieces.Pawn;
 import com.chess.engine.pieces.Piece;
+import com.chess.engine.pieces.Queen;
+import com.chess.engine.pieces.Rook;
 import com.chess.engine.player.MoveTransition;
 import com.chess.engine.player.Player;
 import com.chess.engine.player.ai.MiniMax;
@@ -239,7 +246,7 @@ public class Table extends Observable{
         }
     }
 
-    private JFrame getGameFrame(){
+    public JFrame getGameFrame(){
         return this.gameFrame;
     }
 
@@ -408,6 +415,38 @@ public class Table extends Observable{
         COMPUTER
     }
 
+    private static Piece getPromotionPiece(Move move){
+        // want to be able to underpromote to a knight, bishop, or rook
+        // prompt the user to choose the promotion piece
+        // and return the corresponding piece based on their choice
+        String[] options = {"Knight", "Bishop", "Rook", "Queen"};
+        int choice = JOptionPane.showOptionDialog(
+            Table.get().getGameFrame(),
+            "Choose promotion piece:",
+            "Pawn Promotion",
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.INFORMATION_MESSAGE,
+            null,   
+            options,
+            options[3]); // Default selection is "Queen"
+
+        switch (choice) {
+            case 0: // Knight
+                return new Knight(move.getDestinationCoordinate(), move.getMovedPiece().getPieceAlliance(), false);
+            case 1: // Bishop
+                return new Bishop(move.getDestinationCoordinate(), move.getMovedPiece().getPieceAlliance(), false);
+            case 2: // Rook
+                return new Rook(move.getDestinationCoordinate(), move.getMovedPiece().getPieceAlliance(), false);
+            default: // Queen
+                return new Queen(move.getDestinationCoordinate(), move.getMovedPiece().getPieceAlliance(), false);
+        }
+    }
+
+    private static Move showPromotionOptions(PawnPromotion move){
+        Piece promotionPiece = getPromotionPiece(move);
+        return new Move.PawnPromotion(move.getDecoratedMove(), promotionPiece);
+    }
+
     private class TilePanel extends JPanel{
         private final int tileId;
 
@@ -430,6 +469,7 @@ public class Table extends Observable{
                     }else if (isLeftMouseButton(e)){
                         // first click - source tile is null
                         if (sourceTile == null){
+                            System.out.println("First click");
                             sourceTile = chessBoard.getTile(tileId);
                             humanMovedPiece = sourceTile.getPiece();
 
@@ -439,15 +479,42 @@ public class Table extends Observable{
                             }
                         }else{
                             // second click
+                            System.out.println("Second click");
                             destinationTile = chessBoard.getTile(tileId);
                             final Move move = MoveFactory.createMove(chessBoard, sourceTile.getTileCoordinate(), destinationTile.getTileCoordinate());
-                            final MoveTransition transition = chessBoard.currentPlayer().makeMove(move);
-                            if (transition.getMoveStatus().isDone()){
-                                chessBoard = transition.getTransitionBoard();
-                                moveLog.addMove(move);
-                            }else{
-                                System.out.println("Invalid move");
+
+                            if (humanMovedPiece instanceof Pawn && 
+                                (humanMovedPiece.getPieceAlliance().isWhite() && 
+                                BoardUtils.SEVENTH_RANK[sourceTile.getTileCoordinate()] && 
+                                BoardUtils.EIGHTH_RANK[destinationTile.getTileCoordinate()]) ||
+                                (humanMovedPiece.getPieceAlliance().isBlack() &&
+                                BoardUtils.SECOND_RANK[sourceTile.getTileCoordinate()] &&
+                                BoardUtils.FIRST_RANK[destinationTile.getTileCoordinate()])
+                                ) {
+                                
+                                // Show the promotion options only when moving to the 8th rank
+                                Move promotionMove = Table.showPromotionOptions((PawnPromotion) move);
+                                if (promotionMove != null) {
+                                    System.out.println("Promotion move: " + promotionMove);
+                                    final MoveTransition transition = chessBoard.currentPlayer().makeMove(promotionMove);
+                                    if (transition.getMoveStatus().isDone()) {
+                                        chessBoard = transition.getTransitionBoard();
+                                        moveLog.addMove(promotionMove);
+                                    } else {
+                                        System.out.println("Invalid move");
+                                    }
+                                }
+
+                            } else {
+                                final MoveTransition transition = chessBoard.currentPlayer().makeMove(move);
+                                if (transition.getMoveStatus().isDone()) {
+                                    chessBoard = transition.getTransitionBoard();
+                                    moveLog.addMove(move);
+                                } else {
+                                    System.out.println("Invalid move");
+                                }
                             }
+
                             sourceTile = null;
                             humanMovedPiece = null;
                         }
@@ -519,14 +586,14 @@ public class Table extends Observable{
             Collection<Move> actualLegalMoves = new ArrayList<>();
         
             for (Move move: allLegalMoves){
-                //TODO: executing pawn promotion move requires user input and needs to be handled differently
-                if (move instanceof Move.PawnPromotion){
+                // TODO if it is a pawn promotion move add it to the list without executing (this is a bug that needs to be fixed)
+                if (move instanceof PawnMove.PawnPromotion){
                     actualLegalMoves.add(move);
                     continue;
                 }
+
                 Board transitionBoard = move.execute();
 
-                
                 Collection<Move> kingAttacks = Player.calculateAttacksOnTile(transitionBoard.currentPlayer().getOpponent().getPlayerKing().getPiecePosition(),
                 transitionBoard.currentPlayer().getLegalMoves());
 

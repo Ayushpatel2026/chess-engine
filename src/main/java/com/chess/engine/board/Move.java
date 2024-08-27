@@ -248,11 +248,13 @@ public abstract class Move {
 
         final Move decoratedMove;
         final Pawn promotedPawn;
+        final Piece promotedPiece;
        
-        public PawnPromotion(Move decoratedMove){
+        public PawnPromotion(Move decoratedMove, Piece promotedPiece){
             super(decoratedMove.getBoard(), decoratedMove.movedPiece, decoratedMove.destinationCoordinate);
             this.decoratedMove = decoratedMove;
             this.promotedPawn = (Pawn) decoratedMove.getMovedPiece();
+            this.promotedPiece = promotedPiece;
         }
 
         @Override
@@ -277,7 +279,7 @@ public abstract class Move {
 
         @Override
         public String toString(){
-            return this.decoratedMove.toString() + "=Q";
+            return this.decoratedMove.toString() + "=" + this.promotedPiece.toString();
         }
 
         @Override
@@ -294,12 +296,16 @@ public abstract class Move {
                     builder.setPiece(piece);
                 }
             }
-            // need to get the promoted piece from the user and move it to the destination coordinate
-            builder.setPiece(this.promotedPawn.getPromotionPiece().movePiece(this));
+            // set the promoted piece on the board using the destination coordinates of the decorated move
+            builder.setPiece(this.promotedPiece.movePiece(this));
             // do not set the move maker to the opponent, because when the decorated move executed, the move maker was already set to the opponent
             builder.setMoveMaker(pawnMovedBoard.currentPlayer().getAlliance());
             return builder.build();
         }
+
+        public Move getDecoratedMove(){
+            return decoratedMove;
+        }   
     }
 
     // the pawn jump class is a special move because it has the ability to set an enpassant pawn
