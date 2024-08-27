@@ -21,6 +21,7 @@ import javax.swing.border.EtchedBorder;
 
 import com.chess.engine.board.Move;
 import com.chess.engine.pieces.Piece;
+import com.chess.gui.Table.BoardDirection;
 import com.chess.gui.Table.MoveLog;
 
 public class TakenPiecesPanel extends JPanel {
@@ -30,7 +31,7 @@ public class TakenPiecesPanel extends JPanel {
 
     private static final EtchedBorder PANEL_BORDER = new EtchedBorder(EtchedBorder.RAISED);
     private static final Color PANEL_COLOR = Color.decode("0xFDF5E6");
-    private static final Dimension TAKEN_PIECES_DIMENSION = new Dimension(40, 80);
+    private static final Dimension TAKEN_PIECES_DIMENSION = new Dimension(80, 80);
     
     public TakenPiecesPanel() {
         super(new BorderLayout());
@@ -83,8 +84,12 @@ public class TakenPiecesPanel extends JPanel {
             try {
                 final BufferedImage image = ImageIO.read(new File("art/pieces/simple/" + takenPiece.getPieceAlliance().toString().substring(0, 1) + "" + takenPiece.toString() + ".png"));
                 final ImageIcon icon = new ImageIcon(image);
-                final JLabel imageLabel = new JLabel(new ImageIcon(icon.getImage().getScaledInstance(icon.getIconWidth() - 15, icon.getIconHeight() - 15, Image.SCALE_SMOOTH)));
-                this.northPanel.add(imageLabel);
+                final JLabel imageLabel = new JLabel(new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+                if (Table.get().boardDirection == BoardDirection.FLIPPED){
+                    this.southPanel.add(imageLabel);
+                } else {
+                    this.northPanel.add(imageLabel);
+                }
             } catch (IOException e){
                 e.printStackTrace();
             }
@@ -94,8 +99,12 @@ public class TakenPiecesPanel extends JPanel {
             try {
                 final BufferedImage image = ImageIO.read(new File("art/pieces/simple/" + takenPiece.getPieceAlliance().toString().substring(0, 1) + "" + takenPiece.toString() + ".png"));
                 final ImageIcon icon = new ImageIcon(image);
-                final JLabel imageLabel = new JLabel(new ImageIcon(icon.getImage().getScaledInstance(icon.getIconWidth() - 15, icon.getIconHeight() - 15, Image.SCALE_SMOOTH)));
-                this.southPanel.add(imageLabel);
+                final JLabel imageLabel = new JLabel(new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+                if (Table.get().boardDirection == BoardDirection.FLIPPED){
+                    this.northPanel.add(imageLabel);
+                } else {
+                    this.southPanel.add(imageLabel);
+                }
             } catch (IOException e){
                 e.printStackTrace();
             }

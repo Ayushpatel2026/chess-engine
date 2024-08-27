@@ -51,7 +51,7 @@ public class Table extends Observable{
     private Tile sourceTile;
     private Tile destinationTile;
     private Piece humanMovedPiece;
-    private BoardDirection boardDirection;
+    BoardDirection boardDirection;
     private boolean highLightLegalMoves;
     
     private static String defaultPieceImagesPath = "art/pieces/simple/";
@@ -80,6 +80,8 @@ public class Table extends Observable{
     public void flipBoard(){
         Collections.reverse(boardPanel.boardTiles);
         boardPanel.drawBoard(chessBoard);
+        boardDirection = boardDirection.opposite();
+        Table.get().takenPiecesPanel.redo(moveLog);
     }
 
    
@@ -149,8 +151,7 @@ public class Table extends Observable{
         flipBoardMenuItem.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                Collections.reverse(boardPanel.boardTiles);
-                boardPanel.drawBoard(chessBoard);
+                flipBoard();
             }
         });
         preferencesMenu.add(flipBoardMenuItem);
@@ -495,7 +496,6 @@ public class Table extends Observable{
                                 // Show the promotion options only when moving to the 8th rank
                                 Move promotionMove = Table.showPromotionOptions((PawnPromotion) move);
                                 if (promotionMove != null) {
-                                    System.out.println("Promotion move: " + promotionMove);
                                     final MoveTransition transition = chessBoard.currentPlayer().makeMove(promotionMove);
                                     if (transition.getMoveStatus().isDone()) {
                                         chessBoard = transition.getTransitionBoard();
@@ -588,8 +588,8 @@ public class Table extends Observable{
             for (Move move: allLegalMoves){
                 // TODO if it is a pawn promotion move add it to the list without executing (this is a bug that needs to be fixed)
                 if (move instanceof PawnMove.PawnPromotion){
-                    actualLegalMoves.add(move);
-                    continue;
+                    PawnPromotion pawnPromotion = (PawnPromotion) move;
+                    move = pawnPromotion.getDecoratedMove();
                 }
 
                 Board transitionBoard = move.execute();
