@@ -54,7 +54,7 @@ public class Table extends Observable{
     BoardDirection boardDirection;
     private boolean highLightLegalMoves;
     
-    private static String defaultPieceImagesPath = "art/pieces/simple/";
+    private static String defaultPieceImagesPath = "/pieces/simple/";
 
     private final static Dimension OUTER_FRAME_DIMENSION = new Dimension(600, 600);
     private final static Dimension BOARD_PANEL_DIMENSION = new Dimension(400, 350);
@@ -557,7 +557,7 @@ public class Table extends Observable{
                 for (Move move : pieceLegalMoves(board)){
                     if (move.getDestinationCoordinate() == this.tileId){
                         try {
-                            add(new JLabel(new ImageIcon(ImageIO.read(new File("art/misc/green_dot.png")))));
+                            add(new JLabel(new ImageIcon(ImageIO.read(getClass().getResourceAsStream("/misc/green_dot.png")))));
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -635,7 +635,7 @@ public class Table extends Observable{
             if (board.getTile(tileId).isTileOccupied()){
                 String pieceIconPath = defaultPieceImagesPath;
                 try {
-                    BufferedImage image = ImageIO.read(new File(pieceIconPath+board.getTile(tileId).getPiece().getPieceAlliance().toString().substring(0, 1) + board.getTile(tileId).getPiece().toString() + ".png"));
+                    BufferedImage image = ImageIO.read(getClass().getResourceAsStream(pieceIconPath+board.getTile(tileId).getPiece().getPieceAlliance().toString().substring(0, 1) + board.getTile(tileId).getPiece().toString() + ".png"));
                     add(new JLabel(new ImageIcon(image)));
                 } catch (IOException e) {
                     e.printStackTrace();

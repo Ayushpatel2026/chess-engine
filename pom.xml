@@ -71,5 +71,13 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <resources>
+      <resource>
+        <directory>art</directory> <!-- Include the assets directory -->
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources>
   </build>
 </project>
