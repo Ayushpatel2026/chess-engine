@@ -82,7 +82,7 @@ public class TakenPiecesPanel extends JPanel {
 
         for (final Piece takenPiece : whiteTakenPieces){
             try {
-                final BufferedImage image = ImageIO.read(new File("art/pieces/simple/" + takenPiece.getPieceAlliance().toString().substring(0, 1) + "" + takenPiece.toString() + ".png"));
+                final BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/pieces/simple/" + takenPiece.getPieceAlliance().toString().substring(0, 1) + "" + takenPiece.toString() + ".png"));
                 final ImageIcon icon = new ImageIcon(image);
                 final JLabel imageLabel = new JLabel(new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
                 if (Table.get().boardDirection == BoardDirection.FLIPPED){
@@ -97,7 +97,7 @@ public class TakenPiecesPanel extends JPanel {
 
         for (final Piece takenPiece : blackTakenPieces){
             try {
-                final BufferedImage image = ImageIO.read(new File("art/pieces/simple/" + takenPiece.getPieceAlliance().toString().substring(0, 1) + "" + takenPiece.toString() + ".png"));
+                final BufferedImage image = ImageIO.read(getClass().getResourceAsStream("/pieces/simple/" + takenPiece.getPieceAlliance().toString().substring(0, 1) + "" + takenPiece.toString() + ".png"));
                 final ImageIcon icon = new ImageIcon(image);
                 final JLabel imageLabel = new JLabel(new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
                 if (Table.get().boardDirection == BoardDirection.FLIPPED){
