@@ -104,6 +104,7 @@ public class Table extends Observable{
         this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
         this.gameFrame.add(this.takenPiecesPanel, BorderLayout.WEST);
         this.gameFrame.add(this.gameHistoryPanel, BorderLayout.EAST);
+        this.gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.gameFrame.setVisible(true);
     }
 
@@ -470,7 +471,6 @@ public class Table extends Observable{
                     }else if (isLeftMouseButton(e)){
                         // first click - source tile is null
                         if (sourceTile == null){
-                            System.out.println("First click");
                             sourceTile = chessBoard.getTile(tileId);
                             humanMovedPiece = sourceTile.getPiece();
 
@@ -480,7 +480,6 @@ public class Table extends Observable{
                             }
                         }else{
                             // second click
-                            System.out.println("Second click");
                             destinationTile = chessBoard.getTile(tileId);
                             final Move move = MoveFactory.createMove(chessBoard, sourceTile.getTileCoordinate(), destinationTile.getTileCoordinate());
 
