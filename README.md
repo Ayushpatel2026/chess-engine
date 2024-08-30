@@ -17,7 +17,7 @@ This chess engine is a Java-based application that leverages Java Swing utilitie
    - Make sure you have Java Runtime Environment (JRE) installed on your computer. You can download it from the [official Java website](https://www.java.com/en/download/).
 
 2. **Run the Application:**
-   - Download the `ChessEngine.jar` file from the [link here](build/chess-engine.jar).
+   - Download the `chess-engine.jar` file from the [link here](build/chess-engine.jar).
    - Open a command prompt or terminal.
    - Navigate to the directory where you saved the JAR file.
    - Run the application by double-clicking on the executable JAR file or by using the command:
